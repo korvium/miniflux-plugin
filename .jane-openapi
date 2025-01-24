@@ -3,5 +3,5 @@
 return [
     'openapi-file' => __DIR__ . '/openapi.yaml',
     'namespace' => 'Korvium\Plugin\Miniflux',
-    'directory' => __DIR__ . '/src',
+    'directory' => __DIR__,
 ];
