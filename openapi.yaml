@@ -1,0 +1,1175 @@
+openapi: 3.0.0
+info:
+    title: Miniflux API
+    version: 1.0.0
+    description: API Documentation for Miniflux
+servers:
+    - url: https://reader.miniflux.app/v1
+      description: The default Miniflux API endpoint
+paths:
+    /version:
+        get:
+            summary: Get Miniflux instance version
+            responses:
+                '200':
+                    description: Version details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VersionResponse'
+    
+    /me:
+        get:
+            summary: Get logged user information
+            responses:
+                '200':
+                    description: User details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+    
+    /users:
+        get:
+            summary: Get all users
+            responses:
+                '200':
+                    description: List of users
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/User'
+        post:
+            summary: Create a new user
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UserCreationRequest'
+            responses:
+                '201':
+                    description: User created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+    
+    /users/{userId}:
+        get:
+            summary: Get a user by ID
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: User details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+        put:
+            summary: Update a user
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UserModificationRequest'
+            responses:
+                '200':
+                    description: User updated
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+        delete:
+            summary: Delete a user
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '204':
+                    description: User deleted
+    
+    /users/{username}:
+        get:
+            summary: Get a user by username
+            parameters:
+                - name: username
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: User details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+    
+    /categories:
+        get:
+            summary: Get all categories
+            responses:
+                '200':
+                    description: List of categories
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Category'
+        post:
+            summary: Create a category
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                title:
+                                    type: string
+            responses:
+                '201':
+                    description: Category created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Category'
+    
+    /categories/{categoryId}:
+        get:
+            summary: Get a category by ID
+            parameters:
+                - name: categoryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Category details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Category'
+        put:
+            summary: Update a category
+            parameters:
+                - name: categoryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                title:
+                                    type: string
+            responses:
+                '200':
+                    description: Category updated
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Category'
+        delete:
+            summary: Delete a category
+            parameters:
+                - name: categoryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '204':
+                    description: Category deleted
+    
+    /categories/{categoryId}/mark-all-as-read:
+        put:
+            summary: Mark all unread entries in a category as read
+            parameters:
+                - name: categoryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '204':
+                    description: Category marked as read
+    
+    /categories/{categoryId}/feeds:
+        get:
+            summary: Get feeds of a category
+            parameters:
+                - name: categoryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: List of feeds
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Feed'
+    
+    /categories/{categoryId}/entries/{entryId}:
+        get:
+            summary: Get a single category entry
+            parameters:
+                - name: categoryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                - name: entryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Entry details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Entry'
+    
+    /feeds:
+        get:
+            summary: Get all feeds
+            responses:
+                '200':
+                    description: List of feeds
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Feed'
+        post:
+            summary: Create a feed
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/FeedCreationRequest'
+            responses:
+                '201':
+                    description: Feed created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Feed'
+    
+    /feeds/{feedId}:
+        get:
+            summary: Get a feed
+            parameters:
+                - name: feedId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Feed details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Feed'
+        put:
+            summary: Update a feed
+            parameters:
+                - name: feedId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/FeedModificationRequest'
+            responses:
+                '200':
+                    description: Feed updated
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Feed'
+        delete:
+            summary: Delete a feed
+            parameters:
+                - name: feedId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '204':
+                    description: Feed deleted
+    
+    /feeds/{feedId}/icon:
+        get:
+            summary: Get feed icon
+            parameters:
+                - name: feedId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Feed icon details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/FeedIcon'
+    
+    /feeds/{feedId}/entries:
+        get:
+            summary: Get feed entries
+            parameters:
+                - name: feedId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: List of entries
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Entry'
+    
+    /feeds/{feedId}/entries/{entryId}:
+        get:
+            summary: Get a single feed entry
+            parameters:
+                - name: feedId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                - name: entryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Entry details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Entry'
+    
+    /feeds/refresh:
+        put:
+            summary: Refresh all feeds
+            responses:
+                '204':
+                    description: Feeds refreshed
+    
+    /feeds/{feedId}/refresh:
+        put:
+            summary: Refresh a feed
+            parameters:
+                - name: feedId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '204':
+                    description: Feed refreshed
+    
+    /feeds/{feedId}/mark-all-as-read:
+        put:
+            summary: Mark all unread entries in a feed as read
+            parameters:
+                - name: feedId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '204':
+                    description: Feed marked as read
+    
+    /entries:
+        get:
+            summary: Fetch entries
+            responses:
+                '200':
+                    description: List of entries
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Entry'
+        put:
+            summary: Update multiple entries
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                entry_ids:
+                                    type: array
+                                    items:
+                                        type: integer
+                                status:
+                                    type: string
+            responses:
+                '204':
+                    description: Entries updated
+    
+    /entries/{entryId}:
+        get:
+            summary: Get a single entry
+            parameters:
+                - name: entryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Entry details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Entry'
+        put:
+            summary: Update a single entry
+            parameters:
+                - name: entryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/EntryModificationRequest'
+            responses:
+                '201':
+                    description: Entry updated
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Entry'
+    
+    /entries/{entryId}/bookmark:
+        put:
+            summary: Toggle bookmark status of an entry
+            parameters:
+                - name: entryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '204':
+                    description: Bookmark toggled
+    
+    /entries/{entryId}/save:
+        post:
+            summary: Save an entry to a third-party service
+            parameters:
+                - name: entryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '202':
+                    description: Entry saved
+    
+    /entries/{entryId}/fetch-content:
+        get:
+            summary: Fetch original content of an entry
+            parameters:
+                - name: entryId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Original content
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    content:
+                                        type: string
+    
+    /integrations/status:
+        get:
+            summary: Fetch integrations status
+            responses:
+                '200':
+                    description: Integrations status
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    has_integrations:
+                                        type: boolean
+    
+    /discover:
+        post:
+            summary: Discover subscriptions from a website
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                url:
+                                    type: string
+            responses:
+                '200':
+                    description: List of subscriptions
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Subscription'
+    
+    /export:
+        get:
+            summary: Export OPML file
+            responses:
+                '200':
+                    description: OPML file
+                    content:
+                        application/xml:
+                            schema:
+                                type: string
+    
+    /import:
+        post:
+            summary: Import OPML file
+            requestBody:
+                required: true
+                content:
+                    application/xml:
+                        schema:
+                            type: string
+            responses:
+                '204':
+                    description: OPML imported
+    
+    /flush-history:
+        put:
+            summary: Changes all entries with the status "read" to "removed"
+            responses:
+                '202':
+                    description: Entries flushed
+    
+    /icons/{iconId}:
+        get:
+            summary: Fetch a feed icon
+            parameters:
+                - name: iconId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Icon details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/FeedIcon'
+    
+    /enclosures/{enclosureId}:
+        get:
+            summary: Fetch a specific enclosure
+            parameters:
+                - name: enclosureId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                '200':
+                    description: Enclosure details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Enclosure'
+        put:
+            summary: Update an enclosure
+            parameters:
+                - name: enclosureId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/EnclosureUpdateRequest'
+            responses:
+                '204':
+                    description: Enclosure updated
+components:
+    securitySchemes:
+        BasicAuth:
+            type: http
+            scheme: basic
+        ApiKeyAuth:
+            type: apiKey
+            in: header
+            name: X-Auth-Token
+    schemas:
+        VersionResponse:
+            type: object
+            properties:
+                version:
+                    type: string
+                commit:
+                    type: string
+                buildDate:
+                    type: string
+                goVersion:
+                    type: string
+                compiler:
+                    type: string
+                arch:
+                    type: string
+                os:
+                    type: string
+        
+        User:
+            type: object
+            properties:
+                id:
+                    type: integer
+                username:
+                    type: string
+                password:
+                    type: string
+                isAdmin:
+                    type: boolean
+                theme:
+                    type: string
+                language:
+                    type: string
+                timezone:
+                    type: string
+                entryDirection:
+                    type: string
+                entryOrder:
+                    type: string
+                stylesheet:
+                    type: string
+                customJS:
+                    type: string
+                googleID:
+                    type: string
+                openIDConnectID:
+                    type: string
+                entriesPerPage:
+                    type: integer
+                keyboardShortcuts:
+                    type: boolean
+                showReadingTime:
+                    type: boolean
+                entrySwipe:
+                    type: boolean
+                gestureNav:
+                    type: string
+                lastLoginAt:
+                    type: string
+                    format: date-time
+                displayMode:
+                    type: string
+                defaultReadingSpeed:
+                    type: integer
+                cjkReadingSpeed:
+                    type: integer
+                defaultHomePage:
+                    type: string
+                categoriesSortingOrder:
+                    type: string
+                markReadOnView:
+                    type: boolean
+                mediaPlaybackRate:
+                    type: number
+                    format: float
+                blockFilterEntryRules:
+                    type: string
+                keepFilterEntryRules:
+                    type: string
+                externalFontHosts:
+                    type: string
+        
+        UserCreationRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+                isAdmin:
+                    type: boolean
+                googleID:
+                    type: string
+                openIDConnectID:
+                    type: string
+        
+        UserModificationRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+                isAdmin:
+                    type: boolean
+                theme:
+                    type: string
+                language:
+                    type: string
+                timezone:
+                    type: string
+                entryDirection:
+                    type: string
+                entryOrder:
+                    type: string
+                stylesheet:
+                    type: string
+                customJS:
+                    type: string
+                googleID:
+                    type: string
+                openIDConnectID:
+                    type: string
+                entriesPerPage:
+                    type: integer
+                keyboardShortcuts:
+                    type: boolean
+                showReadingTime:
+                    type: boolean
+                entrySwipe:
+                    type: boolean
+                gestureNav:
+                    type: string
+                displayMode:
+                    type: string
+                defaultReadingSpeed:
+                    type: integer
+                cjkReadingSpeed:
+                    type: integer
+                defaultHomePage:
+                    type: string
+                categoriesSortingOrder:
+                    type: string
+                markReadOnView:
+                    type: boolean
+                mediaPlaybackRate:
+                    type: number
+                    format: float
+                blockFilterEntryRules:
+                    type: string
+                keepFilterEntryRules:
+                    type: string
+                externalFontHosts:
+                    type: string
+        
+        Category:
+            type: object
+            properties:
+                id:
+                    type: integer
+                title:
+                    type: string
+                userId:
+                    type: integer
+        
+        Feed:
+            type: object
+            properties:
+                id:
+                    type: integer
+                userId:
+                    type: integer
+                feedUrl:
+                    type: string
+                siteUrl:
+                    type: string
+                title:
+                    type: string
+                checkedAt:
+                    type: string
+                    format: date-time
+                etagHeader:
+                    type: string
+                lastModifiedHeader:
+                    type: string
+                parsingErrorMessage:
+                    type: string
+                parsingErrorCount:
+                    type: integer
+                disabled:
+                    type: boolean
+                ignoreHttpCache:
+                    type: boolean
+                allowSelfSignedCertificates:
+                    type: boolean
+                fetchViaProxy:
+                    type: boolean
+                scraperRules:
+                    type: string
+                rewriteRules:
+                    type: string
+                blocklistRules:
+                    type: string
+                keeplistRules:
+                    type: string
+                crawler:
+                    type: boolean
+                userAgent:
+                    type: string
+                cookie:
+                    type: string
+                category:
+                    $ref: '#/components/schemas/Category'
+                hideGlobally:
+                    type: boolean
+                disableHttp2:
+                    type: boolean
+        
+        FeedCreationRequest:
+            type: object
+            properties:
+                feedUrl:
+                    type: string
+                categoryId:
+                    type: integer
+                userAgent:
+                    type: string
+                cookie:
+                    type: string
+                username:
+                    type: string
+                password:
+                    type: string
+                crawler:
+                    type: boolean
+                disabled:
+                    type: boolean
+                ignoreHttpCache:
+                    type: boolean
+                allowSelfSignedCertificates:
+                    type: boolean
+                fetchViaProxy:
+                    type: boolean
+                scraperRules:
+                    type: string
+                rewriteRules:
+                    type: string
+                blocklistRules:
+                    type: string
+                keeplistRules:
+                    type: string
+                hideGlobally:
+                    type: boolean
+                disableHttp2:
+                    type: boolean
+        
+        FeedModificationRequest:
+            type: object
+            properties:
+                feedUrl:
+                    type: string
+                siteUrl:
+                    type: string
+                title:
+                    type: string
+                scraperRules:
+                    type: string
+                rewriteRules:
+                    type: string
+                blocklistRules:
+                    type: string
+                keeplistRules:
+                    type: string
+                crawler:
+                    type: boolean
+                userAgent:
+                    type: string
+                cookie:
+                    type: string
+                username:
+                    type: string
+                password:
+                    type: string
+                categoryId:
+                    type: integer
+                disabled:
+                    type: boolean
+                ignoreHttpCache:
+                    type: boolean
+                allowSelfSignedCertificates:
+                    type: boolean
+                fetchViaProxy:
+                    type: boolean
+                hideGlobally:
+                    type: boolean
+                disableHttp2:
+                    type: boolean
+        
+        FeedIcon:
+            type: object
+            properties:
+                id:
+                    type: integer
+                mimeType:
+                    type: string
+                data:
+                    type: string
+        
+        Entry:
+            type: object
+            properties:
+                id:
+                    type: integer
+                publishedAt:
+                    type: string
+                    format: date-time
+                changedAt:
+                    type: string
+                    format: date-time
+                createdAt:
+                    type: string
+                    format: date-time
+                feed:
+                    $ref: '#/components/schemas/Feed'
+                hash:
+                    type: string
+                url:
+                    type: string
+                commentsUrl:
+                    type: string
+                title:
+                    type: string
+                status:
+                    type: string
+                content:
+                    type: string
+                author:
+                    type: string
+                shareCode:
+                    type: string
+                enclosures:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Enclosure'
+                tags:
+                    type: array
+                    items:
+                        type: string
+                readingTime:
+                    type: integer
+                userId:
+                    type: integer
+                feedId:
+                    type: integer
+                starred:
+                    type: boolean
+        
+        EntryModificationRequest:
+            type: object
+            properties:
+                title:
+                    type: string
+                content:
+                    type: string
+        
+        Enclosure:
+            type: object
+            properties:
+                id:
+                    type: integer
+                userId:
+                    type: integer
+                entryId:
+                    type: integer
+                url:
+                    type: string
+                mimeType:
+                    type: string
+                size:
+                    type: integer
+                mediaProgression:
+                    type: integer
+        
+        EnclosureUpdateRequest:
+            type: object
+            properties:
+                mediaProgression:
+                    type: integer
+        
+        Subscription:
+            type: object
+            properties:
+                title:
+                    type: string
+                url:
+                    type: string
+                type:
+                    type: string
+        
+        FeedCounters:
+            type: object
+            properties:
+                readCounters:
+                    type: object
+                    additionalProperties:
+                        type: integer
+                unreadCounters:
+                    type: object
+                    additionalProperties:
+                        type: integer
+        
+        EntryResultSet:
+            type: object
+            properties:
+                total:
+                    type: integer
+                entries:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Entry'
+        
+        Subscriptions:
+            type: array
+            items:
+                $ref: '#/components/schemas/Subscription'
+        
+        Filter:
+            type: object
+            properties:
+                status:
+                    type: string
+                offset:
+                    type: integer
+                limit:
+                    type: integer
+                order:
+                    type: string
+                direction:
+                    type: string
+                starred:
+                    type: string
+                before:
+                    type: integer
+                after:
+                    type: integer
+                publishedBefore:
+                    type: integer
+                publishedAfter:
+                    type: integer
+                changedBefore:
+                    type: integer
+                changedAfter:
+                    type: integer
+                beforeEntryID:
+                    type: integer
+                afterEntryID:
+                    type: integer
+                search:
+                    type: string
+                categoryID:
+                    type: integer
+                feedID:
+                    type: integer
+                statuses:
+                    type: array
+                    items:
+                        type: string
+                globallyVisible:
+                    type: boolean
+        
+        Users:
+            type: array
+            items:
+                $ref: '#/components/schemas/User'
+
+        Feeds:
+            type: array
+            items:
+                $ref: '#/components/schemas/Feed'
+                
+        Categories:
+            type: array
+            items:
+                $ref: '#/components/schemas/Category'
+        
+        Entries:
+            type: array
+            items:
+                $ref: '#/components/schemas/Entry'
+        
+        Enclosures:
+            type: array
+            items:
+                $ref: '#/components/schemas/Enclosure'
+
+        EntryStatus:
+            type: string
+            enum:
+                - unread
+                - read
+                - removed
+        
+            

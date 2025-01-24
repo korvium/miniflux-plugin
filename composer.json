@@ -1,0 +1,55 @@
+{
+    "name": "korvium/miniflux-plugin",
+    "description": "Miniflux plugin for Korvium",
+    "keywords": [
+        "korvium",
+        "plugin",
+        "rss",
+        "openapi",
+        "php",
+        "sdk",
+        "api"
+    ],
+    "type": "library",
+    "license": "AGPL-3.0-or-later",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "Korvium\\Plugin\\Miniflux\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Franck Matsos",
+            "email": "korvium@franck.matsos.fr",
+            "homepage": "https://franck.matsos.fr",
+            "role": "Maintainer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=8.1",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "jane-php/open-api-runtime": "v7.8.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "require-dev": {
+        "jane-php/open-api-3": "v7.8.1",
+        "friendsofphp/php-cs-fixer": "v3.68.1",
+        "php-http/guzzle7-adapter": "1.x-dev"
+    },
+    "scripts": {
+        "build": [
+            "@generate",
+            "@fix"
+        ],
+        "generate": "vendor/bin/jane-openapi generate",
+        "fix": "vendor/bin/php-cs-fixer fix --rules=@Symfony src"
+    }
+}
